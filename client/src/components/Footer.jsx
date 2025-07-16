@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="px-6 mt-30 md:px-16 lg:px-24 w-full text-gray-300">
             <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-500 pb-14">
                 <div className="md:max-w-96">
-                    <img alt="" class="h-11" src={assets.logo} />
+                    <img alt="" className="h-11" src={assets.logo} />
                     <p className="mt-6 text-sm">
                        Welcome to JackMov, your trusted online movie ticket booking plateform designed for every movie lover. JackMov helps you find the perfect movie and book your tickets in second .
                     </p>
