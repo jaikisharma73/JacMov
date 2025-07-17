@@ -51,30 +51,42 @@ const syncUserUpdation = inngest.createFunction(
     }
 )
 
-const sendBookingConfirmationEmail = inngest.createFunction({
-    id :"send-booking-confirmation-email"},
-{event: "app/show.booked"},
-async ({event, step})=>{
-    const {bookingId} =event.data;
-    const booking = await Booking.findById(bookingId).populate({
-        path:'show',
-        populate:{
-            path: "movie", path:"Movie"
-        }
-    }).populate('user');
+const sendBookingConfirmationEmail = inngest.createFunction(
+  { id: "send-booking-confirmation-email" },
+  { event: "app/show.booked" },
+  async ({ event }) => {
+    try {
+      const { bookingId } = event.data;
+      const booking = await Booking.findById(bookingId)
+        .populate({
+          path: "show",
+          populate: { path: "movie", model: "Movie" }, // Fix repeated 'path'
+        })
+        .populate("user");
 
-    await sendEmail({
+      if (!booking || !booking.user || !booking.show || !booking.show.movie) {
+        console.error("Incomplete booking data", booking);
+        return;
+      }
+
+      console.log("Sending email to:", booking.user.email);
+
+      await sendEmail({
         to: booking.user.email,
-        subject : `Payment Confirmation : "${booking.show.movie.title}"booked !`,
+        subject: `Payment Confirmation: "${booking.show.movie.title}" booked!`,
         body: `<div style="font-family:Arial,sans-serif; line-height:1.5;">
-                <h2>Hi ${booking.user.name},</h2>
-                <p> Booking is confirmed</p>
-                <p> Enjoy the show</p>
-                </div>`
-    })
-}
+                  <h2>Hi ${booking.user.name},</h2>
+                  <p>Your booking is confirmed.</p>
+                  <p>Enjoy the show!</p>
+               </div>`,
+      });
 
-)
+      console.log("Email sent successfully!");
+    } catch (error) {
+      console.error("Failed to send confirmation email:", error);
+    }
+  }
+);
 
 
 // Create an empty array where we'll export future Inngest functions
