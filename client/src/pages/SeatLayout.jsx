@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { assets, dummyDateTimeData, dummyShowsData } from "../assets/assets";
 import Loading from "../components/Loading";
 import { ArrowRightIcon, ClockIcon } from "lucide-react";
@@ -16,15 +17,15 @@ const SeatLayout = () => {
     ["G", "H"],
     ["I", "J"],
   ];
-
+  
   const { id, date } = useParams();
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
   const [show, setShow] = useState(null);
-  const [occupiedSeats, setOccupiedSeats] = useState([]);
-
-  const navigate = useNavigate();
-
+  const [occupiedSeats, setOccupiedSeats] = useState([])
+  
+  
+  const navigate = useNavigate()
   const { axios, getToken, user } = useAppContext();
 
   const getShow = async () => {
@@ -48,9 +49,9 @@ const SeatLayout = () => {
     if (occupiedSeats.includes(seatId)) {
       return toast("This seat is already booked !");
     }
-    setSelectedSeats((prev) =>
+    setSelectedSeats(prev =>
       prev.includes(seatId)
-        ? prev.filter((seat) => seat !== seatId)
+        ? prev.filter(seat => seat !== seatId)
         : [...prev, seatId]
     );
   };
@@ -61,15 +62,15 @@ const SeatLayout = () => {
         {Array.from({ length: count }, (_, i) => {
           const seatId = `${row}${i + 1}`;
           return (
-            <button
-              key={seatId}
-              onClick={() => handleSeatClick(seatId)}
-              className={`h-8 w-8 rounded border border-primary/60 cursor-pointer
-                 ${selectedSeats.includes(seatId) && "bg-primary text-white"} 
-              ${occupiedSeats.includes(seatId) && "opacity-50"} `}
-            >
-              {seatId}
-            </button>
+           <button
+  key={seatId}
+  onClick={() => !occupiedSeats.includes(seatId) && handleSeatClick(seatId)}
+  className={`h-8 w-8 rounded border border-primary/60 cursor-pointer
+    ${selectedSeats.includes(seatId) ? "bg-primary text-white" : ""}
+    ${occupiedSeats.includes(seatId) ? "opacity-50" : ""}`}>
+  {seatId}
+</button>
+
           );
         })}
       </div>
@@ -80,9 +81,9 @@ const SeatLayout = () => {
     try {
       const { data } = await axios.get(
         `/api/booking/seats/${selectedTime.showId}`
-      );
+      )
       if (data.success) {
-        setOccupiedSeats(data.occupiedSeats);
+        setOccupiedSeats(data.occupiedSeats)
       } else {
         toast.error(data.message);
       }
@@ -97,10 +98,11 @@ const SeatLayout = () => {
 
         if (!selectedTime || !selectedSeats.length)
         return toast.error("Please select a time and seats");
+
        const { data } = await axios.post(
         '/api/booking/create',
         {
-          showId: selectedTime?.showId,
+          showId: selectedTime.showId,
          selectedSeats,
         },
         {
@@ -127,9 +129,9 @@ const SeatLayout = () => {
 
   useEffect(() => {
     if (selectedTime) {
-      getOccupiedSeats();
+      getOccupiedSeats()
     }
-  }, [selectedTime]);
+  },[selectedTime]);
 
   return show ? (
     <div className="flex flex-col md:flex-row px-6 md:px-16 lg:px-20 py-30 md:pt-30">
