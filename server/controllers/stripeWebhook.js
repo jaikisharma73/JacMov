@@ -28,11 +28,16 @@ export const stripeWebhooks = async (request, response) => {
         console.log("Missing booking ID in session metadata");
         return response.status(400).send("Missing booking ID");
       }
-
       await Booking.findByIdAndUpdate(bookingId, {
         isPaid: true,
         paymentLink: "", // ✅ Optional
-      });
+      })
+
+      await inngest.send({
+        name:"app/show.booked",
+        data:{bookingId}
+      })
+
 
       console.log("✅ Booking marked as paid:", bookingId);
     } else {
