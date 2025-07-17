@@ -19,7 +19,7 @@ const navigate = useNavigate()
                 <CalendarIcon className='w-4.5 h-4.5'/>2025
             </div>
             <div className='flex items-center gap-1'>
-                <ClockIcon className='w-4.5 h-4.5'/>2h 8m
+                <ClockIcon className='w-4.5 h-4.5'/>2h 8m 
             </div>
         </div>
         <p className='max-w-md text-gray-300'>In a post-apocalyptic world where cities ride on wheels and consume each other to survive, two people meet in London and try to stop a conspiracy</p>
