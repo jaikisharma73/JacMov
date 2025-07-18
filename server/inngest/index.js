@@ -81,22 +81,13 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
 const sendBookingConfirmationEmail = inngest.createFunction(
   { id: "send-booking-confirmation-email" },
   { event: "app/show.booked" },
-  async ({ event }) => {
-    try {
+  async ({ event,step }) => {
       const { bookingId } = event.data;
       const booking = await Booking.findById(bookingId)
         .populate({
           path: "show",
           populate: { path: "movie", model: "Movie" }, // Fix repeated 'path'
-        })
-        .populate("user");
-
-      if (!booking || !booking.user || !booking.show || !booking.show.movie) {
-        console.error("Incomplete booking data", booking);
-        return;
-      }
-
-      console.log("Sending email to:", booking.user.email);
+        }).populate("user");
 
       await sendEmail({
         to: booking.user.email,
@@ -108,12 +99,9 @@ const sendBookingConfirmationEmail = inngest.createFunction(
                </div>`,
       });
 
-      console.log("Email sent successfully!");
-    } catch (error) {
-      console.error("Failed to send confirmation email:", error);
-    }
-  }
-);
+          console.log("Email sent successfully!");
+        }
+    );
 
 
 // Create an empty array where we'll export future Inngest functions

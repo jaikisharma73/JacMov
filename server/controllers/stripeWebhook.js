@@ -1,5 +1,6 @@
 import stripe from "stripe";
 import Booking from "../models/booking.js";
+import { inngest } from "../inngest/index.js";
 
 
 export const stripeWebhooks = async (request, response) => {
@@ -32,13 +33,11 @@ export const stripeWebhooks = async (request, response) => {
         isPaid: true ,
         paymentLink: " ", // ✅ Optional
       })
-
+      //send confimation email
       await inngest.send({
         name:"app/show.booked",
         data:{bookingId}
       })
-
-
       console.log("✅ Booking marked as paid:", bookingId);
     } else {
       console.log("Unhandled event type:", event.type);
