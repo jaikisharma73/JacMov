@@ -16,7 +16,7 @@ const {shows}=useAppContext()
     <div className='px-6 md:px-16 lg:px-16 xl:px-26 overflow-hidden'>
 
         <div className='related flex items-center justify-between pt-20 pb-10'>
-            <BlurCircle left='1050px' />
+            <BlurCircle left='10px' />
             <p className='px-6 md:px-16 lg:px-16 xl:px-4 overflow-hidden'>Now Showing</p>
             <button onClick={()=>navigate('/movies')} className='group flex items-center gap-2 text-sm text-gray-300 cursor-pointer'>
                 View All

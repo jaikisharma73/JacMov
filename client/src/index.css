@@ -16,7 +16,7 @@ body{
   background-color: #09090B;
 }
 .no-scrollbar{
-  scrollbar-width: none;
+  scrollbar-width:none;
 }
 
 input::-webkit-outer-spin-button,
