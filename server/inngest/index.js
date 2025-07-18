@@ -52,10 +52,6 @@ const syncUserUpdation = inngest.createFunction(
     }
 )
 
-//to cancel and release seats
-
-
-
 const sendBookingConfirmationEmail = inngest.createFunction(
   { id: "send-booking-confirmation-email" },
   { event: "app/show.booked" },
