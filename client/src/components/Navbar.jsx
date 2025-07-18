@@ -13,7 +13,7 @@ const Navbar = () => {
   const { favoriteMovies } = useAppContext();
 
   return (
-    <div className='fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 md:px-16 py-3 bg-black/80 backdrop-blur-sm'>
+    <div className='fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 md:px-16 py-3'>
       
       {/* Logo */}
       <Link to='/' className='flex-shrink-0'>
