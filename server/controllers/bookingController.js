@@ -41,7 +41,6 @@ export const createBooking = async (req, res) => {
   show: showId,
   amount: showData.showPrice * selectedSeats.length,
   bookedSeats: selectedSeats,
-  isPaid: false,
 });
 
 
