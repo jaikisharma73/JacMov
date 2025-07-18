@@ -1,9 +1,9 @@
 import stripe from "stripe";
 import Booking from "../models/booking.js";
 
-const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
 
 export const stripeWebhooks = async (request, response) => {
+  const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
   const sig = request.headers["stripe-signature"];
 
   let event;
@@ -29,8 +29,8 @@ export const stripeWebhooks = async (request, response) => {
         return response.status(400).send("Missing booking ID");
       }
       await Booking.findByIdAndUpdate(bookingId, {
-        isPaid: true,
-        paymentLink: "", // ✅ Optional
+        isPaid: true ,
+        paymentLink: " ", // ✅ Optional
       })
 
       await inngest.send({

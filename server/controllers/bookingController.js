@@ -37,11 +37,13 @@ export const createBooking = async (req, res) => {
 
     const showData = await Show.findById(showId).populate("movie");
     const booking = await Booking.create({
-      user: userId,
-      show: showId,
-      amount: showData.showPrice * selectedSeats.length,
-      bookedSeats: selectedSeats,
-    });
+  user: userId,
+  show: showId,
+  amount: showData.showPrice * selectedSeats.length,
+  bookedSeats: selectedSeats,
+  isPaid: false,
+});
+
 
     // Mark selected seats as occupied
     if (!showData.occupiedSeats || typeof showData.occupiedSeats !== "object") {
@@ -58,16 +60,17 @@ export const createBooking = async (req, res) => {
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
 
     //creting line item to for stripe
-    const line_items =[{
-      price_data:{
-        currency:'usd',
-        product_data:{
-          name: showData.movie.title
-        },
-        unit_amount : Math.floor(booking.amount)*100
-      },
-      quantity:1
-    }]
+    const line_items = [{
+  price_data: {
+    currency: 'usd',
+    product_data: {
+      name: showData.movie.title,
+    },
+    unit_amount: Math.round(booking.amount * 100), // 💰 accurate
+  },
+  quantity: 1,
+}];
+
 
     const session = await stripeInstance.checkout.sessions.create({
       success_url: `${origin}/loading/my-bookings`,

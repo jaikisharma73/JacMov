@@ -2,6 +2,7 @@ import { Inngest } from "inngest";
 import User from "../models/user.js";
 import Booking from "../models/booking.js";
 import sendEmail from "../configs/nodeMailer.js";
+import Show from "../models/show.js";
 
 
 // Create a client to send and receive events
@@ -51,6 +52,32 @@ const syncUserUpdation = inngest.createFunction(
     }
 )
 
+//to cancel and release seats
+
+const releaseSeatsAndDeleteBooking = inngest.createFunction(
+  {id: 'release-seats-delete-booking'},
+  {event:"app/checkpayment"},
+  async({event,step})=>{
+    const tenMinutesLater = new Date(Date.now()+10*60*1000);
+    await step.sleepUntil('wait for 10 minute',tenMinutesLater);
+    await step.run('check-payment-status', async () => {
+      const bookingId = event.data.bookingId;
+      const booking = await Booking.findById(bookingId);
+
+      //if payment is not made, release seats and delete booking
+      if(!booking.isPaid){
+        const show = await Show.findById(booking.show);
+        booking.bookedSeats.forEach((seat)=>{
+          delete show.occupiedSeats[seat]
+        });
+        show.markModified('occupiedSeats')
+        await show.save()
+        await Booking.findByIdAndDelete(booking._id)
+      }    
+    })
+  }
+)
+
 const sendBookingConfirmationEmail = inngest.createFunction(
   { id: "send-booking-confirmation-email" },
   { event: "app/show.booked" },
@@ -90,4 +117,4 @@ const sendBookingConfirmationEmail = inngest.createFunction(
 
 
 // Create an empty array where we'll export future Inngest functions
-export const functions = [syncUserCreation,syncUserDeletion,syncUserUpdation,sendBookingConfirmationEmail];
+export const functions = [syncUserCreation,syncUserDeletion,syncUserUpdation,releaseSeatsAndDeleteBooking,sendBookingConfirmationEmail];
